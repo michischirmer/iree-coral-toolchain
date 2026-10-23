@@ -1,0 +1,69 @@
+# Pinned versions for the IREE Coral Edge TPU toolchain.
+#
+# This file is the single source of truth for what a bootstrap builds.  Values
+# are the versions actually present and verified by the test suite; nothing here
+# is guessed.  Update it deliberately, then re-run
+# scripts/verify_installation.sh.
+#
+# Format: plain KEY=VALUE, shell-sourceable.  No inline comments after values.
+
+# --- IREE fork ------------------------------------------------------------
+# The Coral compiler plugin and native HAL loader live in a fork of upstream
+# IREE.  The toolchain builds this exact commit.
+IREE_CORAL_BRANCH=coral-edge-tpu
+IREE_CORAL_COMMIT=55259a56564691d3128368f299718262e162aaf3
+IREE_UPSTREAM_COMMIT=697057d10685457d3b83c157adb70275e3668070
+# Required paths inside the fork; build fails early if any is missing.
+IREE_REQUIRED_PATHS="compiler/plugins/target/Coral/CoralGenerationPass.cpp compiler/plugins/target/Coral/CoralTarget.cpp runtime/src/iree/hal/local/loaders/coral_executable_loader.c"
+
+# --- IREE fork location ---------------------------------------------------
+# The fork is a sibling checkout by default; override IREE_CORAL_SOURCE to build
+# from somewhere else.  bootstrap_iree.sh clones IREE_CORAL_REPO when the fork
+# is not already checked out, so a fresh machine bootstraps without arguments.
+IREE_CORAL_DEFAULT_DIR=../iree-coral-fork
+IREE_CORAL_REPO=https://github.com/michischirmer/iree.git
+
+# --- Edge TPU runtime / compiler (fetched binaries) ----------------------
+EDGETPU_COMPILER_VERSION=14.1.317412892
+
+# --- TensorFlow source used only to build libcoral_native.so --------------
+# The IREE runtime never links TensorFlow directly; the native Coral runtime is
+# a small shim whose only dependency is the TFLite 2.7 C API.  The TensorFlow
+# tree is a build-time input, never a runtime dependency.
+TENSORFLOW_VERSION=2.7.0
+TENSORFLOW_COMMIT=c256c071bb26e1e13b4666d1b3e229e110bc914a
+TENSORFLOW_REPO=https://github.com/tensorflow/tensorflow.git
+# The libedgetpu headers and the proprietary edgetpu_compiler come from the
+# Coral edgetpu repository, pinned to the revision the tests were verified on.
+EDGETPU_REPO=https://github.com/google-coral/edgetpu.git
+EDGETPU_COMMIT=5020de9386ff370dcc1f63291a2d0f98eeb98adb
+# The TFLite-2.7-compatible libedgetpu.so.1.0 ships in the pycoral repository's
+# libedgetpu_bin/ tree, not in edgetpu (whose libedgetpu/ build targets a newer
+# ABI the 2.7 delegate rejects).
+PYCORAL_REPO=https://github.com/google-coral/pycoral.git
+PYCORAL_COMMIT=46f06c8dd9c5231e5cb27910d4e1fcbdcf1be8f0
+
+# --- Test data ------------------------------------------------------------
+# The reference model copied out of the edgetpu test data; the hardware and
+# quantisation suites run against exactly this file.
+TEST_MODEL_SHA256=51e8256b05665529f8836fe6e8eeed41b2fc75a900d8eebda338d70a6726f8da
+
+# --- Eigen (pinned for reproducible TFLite 2.7 builds) ---------------------
+# Downloaded from the TensorFlow GCS mirror to avoid intermittent GitLab
+# clone failures; the hash matches tensorflow/third_party/eigen3/workspace.bzl.
+EIGEN_COMMIT=7792b1e909a98703181aecb8810b4b654004c25d
+EIGEN_SHA256=517a02cd24362fd9284ce61e8baeeabb4fee181941752da47eb4c07a52d38d4d
+EIGEN_URL=https://storage.googleapis.com/mirror.tensorflow.org/gitlab.com/libeigen/eigen/-/archive/7792b1e909a98703181aecb8810b4b654004c25d/eigen-7792b1e909a98703181aecb8810b4b654004c25d.tar.gz
+
+# --- Python (verified in .venv on Ubuntu 24.04, Python 3.12.3) ------------
+PYTHON_VERSION=3.12.3
+PY_TENSORFLOW=2.21.0
+PY_NUMPY=2.5.4
+PY_FLATBUFFERS=25.12.19
+PY_PROTOBUF=7.36.2
+
+# --- System build tools ---------------------------------------------------
+CMAKE_MIN=3.28
+NINJA_MIN=1.11
+CLANG_MIN=18
+GCC_MIN=13

@@ -1,0 +1,40 @@
+# Build outputs and fetched/built trees. Nothing here is authored in this
+# repository; regenerate it with the scripts in scripts/.
+/iree-coral-fork/
+/iree/
+/iree-build/
+/iree-compiler-build/
+/iree-runtime-build/
+/iree-runtime-install/
+/iree-runtime-install-build/
+/tensorflow-source/
+/tflite-build/
+/edgetpu/
+/libedgetpu/
+/third-party/
+/.venv/
+/generated/
+/test-logs/
+/coral-example/
+
+# Compiled artifacts (rebuilt by scripts/build_*.sh).
+*.o
+*.a
+*.so
+*.so.*
+*.vmfb
+*.tmp
+__pycache__/
+*.pyc
+
+# Native runtime link products under runtime/ (rebuilt by the scripts).
+/runtime/libcoral_native.so
+/runtime/libedgetpu.so
+/runtime/libedgetpu.so.1
+/runtime/coral_loader_negative_test
+
+# Test data (fetched by scripts/fetch_test_data.sh).
+/tests/test_data/
+
+# Fetched Eigen archive (verified input for the TFLite build).
+/eigen-*.tar.gz
